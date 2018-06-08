@@ -1,0 +1,77 @@
+
+
+
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+def libName = 'permission'
+def libGroup = 'com.cyanandroid.' + libName
+def libSite = 'https://github.com/Dharmesh-Dabhi/' + libName
+def libGit = libSite + '.git'
+def libTracker = libSite + '/issues'
+def libDesc = "Lightweight android run-time permission library"
+def libTags = ['android', 'kotlin', 'runtime-permission', 'kotlin-library', 'kotlin-android']
+
+group = "com.cyanandroid"
+version = "0.0.1"
+
+Properties properties = new Properties()
+properties.load(rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user properties.getProperty('bintray_user')
+    key properties.getProperty('bintray_key')
+    configurations = ['archives']
+    pkg {
+        repo = 'maven'
+        name = libName
+        desc = libDesc
+        websiteUrl = libSite
+        issueTrackerUrl = libTracker
+        vcsUrl = libGit
+        labels = libTags
+        licenses = ['Apache-2.0']
+        publish = true
+        publicDownloadNumbers = true
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            packaging 'aar'
+            groupId libGroup
+            artifactId libName
+            name libName
+            description libDesc
+            url libSite
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                }
+            }
+            developers {
+                developer {
+                    id 'Dharmesh-Dabhi'
+                    name 'Dharmesh Dabhi'
+                    email 'dharmeshldabhi@gmail.com'
+                }
+            }
+            scm {
+                connection libGit
+                developerConnection libGit
+                url libSite
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier 'sources'
+}
+
+artifacts {
+    archives sourcesJar
+}
